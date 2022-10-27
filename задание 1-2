@@ -1,0 +1,134 @@
+#include <stdio.h>
+#include <conio.h>
+#include <malloc.h>
+#include <locale.h>
+#include <windows.h>
+#pragma warning (disable:6054)
+
+struct tree {
+	int data;
+	struct tree* right;
+	struct tree* left;
+};
+
+struct tree* root = NULL;
+
+//  функция создания дерева
+struct tree* CreateTree(struct tree* root, struct tree* r, int data)
+{
+	if (r == NULL)
+	{
+		r = (struct tree*)malloc(sizeof(struct tree));
+		if (r == NULL)
+		{
+			printf("Ошибка при выделения памяти");
+			exit(1);
+		}
+		r->right = NULL;
+		r->left = NULL;
+		r->data = data;
+		if (root == NULL)
+			return r;
+		if (data > root->data)
+			root->right = r;
+		else root->left = r;
+		return r;
+	}
+	if (data > r->data)
+		CreateTree(r, r->right, data);
+	else
+		CreateTree(r, r->left, data);
+	return root;
+}
+
+//  функция вывода дерева на экран
+void print_tree(struct tree* r, int l)
+{
+	if (r == NULL)
+	{
+		return;
+	}
+	print_tree(r->left, l + 1);
+	for (int i = 0; i < l; i++)
+	{
+		printf(" ");
+	}
+	printf("%d\n", r->data);
+	print_tree(r->right, l + 1);
+}
+
+//  функция поиска заданного элемента в дереве
+int search(tree* root, int key)
+{
+	if (root == NULL)  // если дерево пустое или закончен обход
+		return 0;
+
+	if (root->data == key)  // если найден искомый элемент
+		return root->data;
+
+	if (key < root->data)  // поиск по дереву
+		return search(root->left, key);
+	else return search(root->right, key);
+	return 0;
+}
+
+//  функция подсчета числа вхождений элемента в дерево
+void funcchet(struct tree** root, int chet, int m) {
+	if (*root != NULL) {
+		if (chet == (*root)->data)
+			m++;
+
+		if (chet > (*root)->data)
+			funcchet(&((*root)->right), chet, m);
+		else funcchet(&((*root)->left), chet, m);
+		return;
+	}
+	printf("Число вхождений элемента в дерево: %d\n\n", m);
+}
+
+int main()
+{
+	setlocale(LC_ALL, "");
+	int D, start = 1, key, chet, m, k;
+	printf("-1 - окончание построения дерева\n");
+	while (start)
+	{
+		printf("Введите число: ");
+		scanf_s("%d", &D);
+		if (D == -1)
+		{
+			printf("Построение дерева окончено\n\n");
+			start = 0;
+		}
+		else
+			root = CreateTree(root, root, D);
+	}
+	print_tree(root, 0);
+
+	printf("\n1 - найти заданный элемент в дереве\n2 - посчитать число вхождений элемента в дерево\n3 - выход\n\n");
+	while (true) {
+		int l = _getch();
+		switch (l) {
+		case '1':
+			printf("Введите элемент, который хотите найти : ");
+			scanf_s("%d", &key);
+			k = search(root, key);
+			if (k == key)
+				printf("Элемент найден\n\n");
+			else printf("Элемент не найден\n\n");
+			break;
+		case '2':
+			printf("Введите элемент для подсчета числа вхождений в дерево: ");
+			scanf_s("%d", &chet);
+			m = 0;
+			funcchet(&root, chet, m);
+			break;
+		case '3':
+			exit(1);
+			break;
+		default:
+			break;
+		}
+	}
+	return 0;
+}
