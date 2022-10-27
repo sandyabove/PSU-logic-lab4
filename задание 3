@@ -1,0 +1,93 @@
+#include <Windows.h>
+#include <stdio.h>
+struct tree {
+    int data;
+    struct tree* right;
+    struct tree* left;
+};
+
+struct tree* root = NULL; 
+int flag = 0;
+
+
+struct tree* CreateTree(struct tree* root, struct tree* r, int data)
+{
+    if (r == NULL)
+    {
+        r = (struct tree*)malloc(sizeof(struct tree));
+        if (r == NULL)
+        {
+            printf("Ошибка при выделения памяти");
+            exit(0);
+        }
+
+        r->left = NULL;
+        r->right = NULL;
+        r->data = data;
+        if (root == NULL) return r;
+
+        if (data > root->data)    root->left = r;
+        else root->right = r;
+        return r;
+    }
+    if (data > r->data)
+        CreateTree(r, r->left, data);
+    else {
+        if (data < r->data) {
+            CreateTree(r, r->right, data);
+        }
+        else
+        { 
+            printf("Данное число уже есть, введите другое число - ");
+            return root; 
+        }
+    }
+    return root;
+}
+
+
+void print_tree(struct tree* r, int l)
+{
+
+    if (r == NULL)
+    {
+        return;
+    }
+
+    print_tree(r->right, l + 1);
+    for (int i = 0; i < l; i++)
+    {
+        printf(" ");
+    }
+
+    printf("%d\n", r->data);
+    print_tree(r->left, l + 1);
+}
+
+
+int main()
+{
+    SetConsoleCP(1251);
+    SetConsoleOutputCP(1251);
+    int D, start = 1;
+
+    root = NULL;
+    printf("Что бы закончить построение дерева, введите: -1\n");
+    while (start)
+    {
+        printf("Введите число: ");
+        scanf_s("%d", &D);
+        if (D == -1)
+        {
+            printf("Построение дерева окончено\n\n");
+            start = 0;
+        }
+        else 
+            root = CreateTree(root, root, D);
+    }
+
+    print_tree(root, 0);
+
+    scanf_s("%d", &D);
+    return 0;
+}
